@@ -48,27 +48,30 @@ public sealed class DatabaseStartupTests
     }
 
     private static WebApplicationFactory<Program> CreateFactory(string environment, string? setting)
+{
+    return new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
     {
-        return new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
+        builder.UseEnvironment(environment);
+        
+        // Forcefully override the settings for the test application configuration
+        builder.ConfigureAppConfiguration((context, config) =>
         {
-            builder.UseEnvironment(environment);
-            builder.ConfigureAppConfiguration((_, configuration) =>
+            config.AddInMemoryCollection(new Dictionary<string, string?>
             {
-                configuration.AddInMemoryCollection(new Dictionary<string, string?>
-                {
-                    ["Database:ApplyMigrationsOnStartup"] = setting,
-                    ["Jwt:Issuer"] = "GrandmastersHub.Api",
-                    ["Jwt:Audience"] = "GrandmastersHub.Client",
-                    ["Jwt:SigningKey"] = "startup-tests-only-not-a-production-signing-key",
-                    ["Jwt:ExpiryMinutes"] = "5"
-                });
-            });
-            builder.ConfigureServices(services =>
-            {
-                services.RemoveAll<GrandmastersDbContext>();
-                services.AddScoped<GrandmastersDbContext>(_ =>
-                    throw new InvalidOperationException(DatabaseResolved));
+                { "Database:ApplyMigrationsOnStartup", setting },
+                { "Jwt:Issuer", "GrandmastersHub.Api" },
+                { "Jwt:Audience", "GrandmastersHub.Client" },
+                { "Jwt:SigningKey", "startup-tests-only-not-a-production-signing-key-12345" },
+                { "Jwt:ExpiryMinutes", "5" }
             });
         });
-    }
+
+        builder.ConfigureServices(services =>
+        {
+            services.RemoveAll<GrandmastersDbContext>();
+            services.AddScoped<GrandmastersDbContext>(_ =>
+                throw new InvalidOperationException(DatabaseResolved));
+        });
+    });
+}
 }
