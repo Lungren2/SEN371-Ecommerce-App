@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Link, Route, Routes, useLocation } from 'react
 import './index.css';
 import './shopping.css';
 import './responsive.css';
+import './mobile-menu.css';
 import { CartProvider, useCart } from './cart/CartProvider';
 import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
@@ -74,6 +75,83 @@ function AnimatedRoutes() {
   );
 }
 
+function SiteHeader() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+  const closeMenu = () => setMenuOpen(false);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') setMenuOpen(false);
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [menuOpen]);
+
+  return (
+    <header className={`main-header${menuOpen ? ' menu-open' : ''}`}>
+      <Link to="/" className="logo-group" onClick={closeMenu}>
+        <div className="logo-icon"></div>
+        <span className="logo-text">The Grandmaster's Hub</span>
+      </Link>
+
+      <button
+        type="button"
+        className="menu-toggle"
+        aria-expanded={menuOpen}
+        aria-controls="primary-navigation"
+        aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+        onClick={() => setMenuOpen((open) => !open)}
+      >
+        <span className="menu-toggle-icon" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      </button>
+
+      <nav
+        id="primary-navigation"
+        className={`nav-links${menuOpen ? ' is-open' : ''}`}
+        aria-label="Primary navigation"
+      >
+        <Link to="/boards" onClick={closeMenu}>Boards</Link>
+        <Link to="/clocks" onClick={closeMenu}>Clocks</Link>
+        <Link to="/books" onClick={closeMenu}>Books</Link>
+        <Link to="/bespoke" onClick={closeMenu}>Bespoke Sets</Link>
+        <div className="nav-divider"></div>
+        <Link to="/cart" className="cart-button" onClick={closeMenu}>
+          <svg
+            className="cart-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 4H5L7 14H17L20 7H8"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle cx="9" cy="19" r="1.5" fill="currentColor" />
+            <circle cx="17" cy="19" r="1.5" fill="currentColor" />
+          </svg>
+          <CartCount />
+        </Link>
+        <Link to="/profile" onClick={closeMenu}>Account</Link>
+      </nav>
+    </header>
+  );
+}
+
 function App() {
   const [loading, setLoading] = useState(true);
 
@@ -84,67 +162,34 @@ function App() {
 
   if (loading) return <LoadingScreen />;
 
-    return (
-        <Router basename="/SEN371-Ecommerce-App">
+  return (
+    <Router basename="/SEN371-Ecommerce-App">
       <CartProvider>
-      <div className="app-container">
-        <header className="main-header">
-          <Link to="/" className="logo-group">
-            <div className="logo-icon"></div>
-            <span className="logo-text">The Grandmaster's Hub</span>
-          </Link>
+        <div className="app-container">
+          <SiteHeader />
 
-          <nav className="nav-links">
-            <Link to="/boards">Boards</Link>
-            <Link to="/clocks">Clocks</Link>
-            <Link to="/books">Books</Link>
-            <Link to="/bespoke">Bespoke Sets</Link>
-            <div className="nav-divider"></div>
-            <Link to="/cart" className="cart-button">
-              <svg
-                className="cart-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M3 4H5L7 14H17L20 7H8"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <circle cx="9" cy="19" r="1.5" fill="currentColor" />
-                <circle cx="17" cy="19" r="1.5" fill="currentColor" />
-              </svg>
-              <CartCount />
-            </Link>
-            <Link to="/profile">Account</Link>
-          </nav>
-        </header>
+          <AnimatedRoutes />
 
-        <AnimatedRoutes />
-
-        <footer className="main-footer">
-          <div className="footer-top">
-            <div className="footer-newsletter">
-              <Link to="/" className="logo-group">
-                <div className="logo-icon"></div>
-                <span className="logo-text">The Grandmaster's Hub</span>
-              </Link>
-              <p>Subscribe to receive exclusive access to bespoke collection drops, design history, and masterclass tactical guides.</p>
+          <footer className="main-footer">
+            <div className="footer-top">
+              <div className="footer-newsletter">
+                <Link to="/" className="logo-group">
+                  <div className="logo-icon"></div>
+                  <span className="logo-text">The Grandmaster's Hub</span>
+                </Link>
+                <p>Subscribe to receive exclusive access to bespoke collection drops, design history, and masterclass tactical guides.</p>
+              </div>
             </div>
-          </div>
-          <div className="footer-bottom">
-            <span>© 2026 The Grandmaster's Hub. All Rights Reserved.</span>
-            <div className="footer-links">
-              <span>Privacy Policy</span>
-              <span>Terms of Service</span>
-              <span>White Glove Courier</span>
+            <div className="footer-bottom">
+              <span>© 2026 The Grandmaster's Hub. All Rights Reserved.</span>
+              <div className="footer-links">
+                <span>Privacy Policy</span>
+                <span>Terms of Service</span>
+                <span>White Glove Courier</span>
+              </div>
             </div>
-          </div>
-        </footer>
-      </div>
+          </footer>
+        </div>
       </CartProvider>
     </Router>
   );
