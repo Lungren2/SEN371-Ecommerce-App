@@ -92,7 +92,12 @@
     margin: var(--space-2) calc(-1 * var(--page-gutter)) calc(-1 * var(--space-2));
     padding: 0 var(--page-gutter) var(--space-2);
     justify-self: stretch;
+    justify-content: stretch;
+    align-items: stretch;
+    gap: 0;
     overflow: visible;
+    overscroll-behavior-inline: auto;
+    scrollbar-width: auto;
     border-top: 1px solid var(--border-main);
   }
 
