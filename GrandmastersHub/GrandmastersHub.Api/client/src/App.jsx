@@ -84,8 +84,8 @@ function App() {
 
   if (loading) return <LoadingScreen />;
 
-  return (
-    <Router>
+    return (
+        <Router basename="/SEN371-Ecommerce-App">
       <CartProvider>
       <div className="app-container">
         <header className="main-header">
