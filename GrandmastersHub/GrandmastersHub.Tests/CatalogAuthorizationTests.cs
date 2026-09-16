@@ -20,41 +20,104 @@ public sealed class CatalogAuthorizationTests : IClassFixture<WebApplicationFact
         _factory = factory.WithWebHostBuilder(builder => builder.UseEnvironment("Development"));
     }
 
-    public static TheoryData<string, object> RestrictedCatalogWrites => new()
-    {
-        { "/api/v1/products", new { name = "Tournament board", price = 950, stockQuantity = 4, categoryId = 1 } },
-        { "/api/v1/categories", new { name = "Boards", description = "Chess boards" } }
-    };
-
-    [Theory]
-    [MemberData(nameof(RestrictedCatalogWrites))]
-    public async Task Create_WithoutAToken_ReturnsUnauthorized(string path, object body)
+    [Fact]
+    public async Task Create_Product_WithoutAToken_ReturnsUnauthorized()
     {
         using var client = CreateClient();
 
-        var response = await client.PostAsJsonAsync(path, body);
+        var body = new
+        {
+            name = $"Security Test Board {Guid.NewGuid():N}",
+            price = 950,
+            stockQuantity = 4,
+            categoryId = 1
+        };
+
+        var response = await client.PostAsJsonAsync("/api/v1/products", body);
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
-    [Theory]
-    [MemberData(nameof(RestrictedCatalogWrites))]
-    public async Task Create_AsCustomer_ReturnsForbidden(string path, object body)
+    [Fact]
+    public async Task Create_Product_AsCustomer_ReturnsForbidden()
     {
         using var client = CreateClient(UserRoles.Customer);
 
-        var response = await client.PostAsJsonAsync(path, body);
+        var body = new
+        {
+            name = $"Security Test Board {Guid.NewGuid():N}",
+            price = 950,
+            stockQuantity = 4,
+            categoryId = 1
+        };
+
+        var response = await client.PostAsJsonAsync("/api/v1/products", body);
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
-    [Theory]
-    [MemberData(nameof(RestrictedCatalogWrites))]
-    public async Task Create_AsAdmin_ReturnsCreated(string path, object body)
+    [Fact]
+    public async Task Create_Product_AsAdmin_ReturnsCreated()
     {
         using var client = CreateClient(UserRoles.Admin);
 
-        var response = await client.PostAsJsonAsync(path, body);
+        var body = new
+        {
+            name = $"Security Test Board {Guid.NewGuid():N}",
+            price = 950,
+            stockQuantity = 4,
+            categoryId = 1
+        };
+
+        var response = await client.PostAsJsonAsync("/api/v1/products", body);
+
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Create_Category_WithoutAToken_ReturnsUnauthorized()
+    {
+        using var client = CreateClient();
+
+        var body = new
+        {
+            name = $"Security Test Category {Guid.NewGuid():N}",
+            description = "Security test category"
+        };
+
+        var response = await client.PostAsJsonAsync("/api/v1/categories", body);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Create_Category_AsCustomer_ReturnsForbidden()
+    {
+        using var client = CreateClient(UserRoles.Customer);
+
+        var body = new
+        {
+            name = $"Security Test Category {Guid.NewGuid():N}",
+            description = "Security test category"
+        };
+
+        var response = await client.PostAsJsonAsync("/api/v1/categories", body);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Create_Category_AsAdmin_ReturnsCreated()
+    {
+        using var client = CreateClient(UserRoles.Admin);
+
+        var body = new
+        {
+            name = $"Security Test Category {Guid.NewGuid():N}",
+            description = "Security test category"
+        };
+
+        var response = await client.PostAsJsonAsync("/api/v1/categories", body);
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
@@ -75,6 +138,7 @@ public sealed class CatalogAuthorizationTests : IClassFixture<WebApplicationFact
                 SigningKey = SigningKey,
                 ExpiryMinutes = 5
             }));
+
             var token = tokenService.CreateToken(new User
             {
                 UserId = 42,
@@ -82,7 +146,9 @@ public sealed class CatalogAuthorizationTests : IClassFixture<WebApplicationFact
                 PasswordHash = "not-used",
                 Role = role
             });
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
+
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token.AccessToken);
         }
 
         return client;
