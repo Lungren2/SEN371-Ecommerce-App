@@ -44,7 +44,7 @@ const test = base.extend({
         await route.fulfill({ status: 404, json: { message: `Unexpected test request: ${request.method()} ${path}` } });
       }
     });
-    await page.goto('/cart');
+        await page.goto('/SEN371-Ecommerce-App/cart');
     await expect(page.locator('[aria-label="Quantity: 1"]')).toHaveText('1');
     await page.evaluate(() => {
       window.cartStorageEvents = 0;
@@ -58,7 +58,7 @@ const test = base.extend({
     await otherTab.route('**/cart-event-source', (route) => route.fulfill({
       contentType: 'text/html', body: '<!doctype html><title>Cart event source</title>',
     }));
-    await otherTab.goto('/cart-event-source');
+        await otherTab.goto('/SEN371-Ecommerce-App/cart-event-source');
     let signals = 0;
     const signal = async () => {
       signals += 1;
