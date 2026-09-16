@@ -1,6 +1,14 @@
-﻿namespace GrandmastersHub.Api.Controllers
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace GrandmastersHub.Api.Controllers;
+
+[ApiController]
+[Route("api/v1/[controller]")]
+public class ReviewsController : ControllerBase
 {
-    public class ReviewsController
+   [HttpGet]
+    public IActionResult GetReviews()
     {
+        return Ok(new[] { "Great chess board!", "Fast shipping." });
     }
 }
