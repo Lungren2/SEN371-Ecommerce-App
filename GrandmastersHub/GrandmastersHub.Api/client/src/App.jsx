@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Link, Route, Routes, useLocation } from 'react-router-dom';
 import './index.css';
 import './shopping.css';
+import './responsive.css';
 import { CartProvider, useCart } from './cart/CartProvider';
 import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
