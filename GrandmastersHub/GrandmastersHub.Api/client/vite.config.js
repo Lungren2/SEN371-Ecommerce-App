@@ -3,13 +3,14 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
-  server: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:5188',
-        changeOrigin: true,
-      },
+    base: '/SEN371-Ecommerce-App/',
+    plugins: [react()],
+    server: {
+        proxy: {
+            '/api': {
+                target: 'http://localhost:5188',
+                changeOrigin: true,
+            },
+        },
     },
-  },
 })
