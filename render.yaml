@@ -12,7 +12,7 @@ services:
     region: frankfurt
     branch: main
     repo: https://github.com/Lungren2/SEN371-Ecommerce-App
-    autoDeploy: true
+    autoDeployTrigger: commit
     dockerfilePath: ./Dockerfile
     dockerContext: .
     healthCheckPath: /health
