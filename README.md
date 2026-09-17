@@ -2,6 +2,31 @@
 
 A full-stack e-commerce application for SEN371, built with ASP.NET Core, Entity Framework Core, SQL Server, React, and Vite.
 
+## System architecture
+
+```mermaid
+flowchart LR
+    U[User Browser]
+
+    subgraph Render[Render]
+        W[Docker Web Service\nASP.NET Core API]
+        F[React/Vite SPA\nserved from wwwroot]
+        DB[(PostgreSQL)]
+    end
+
+    U -->|HTTPS| W
+    W -->|serves static app| F
+    F -->|/api/v1/*| W
+    W -->|EF Core / Npgsql| DB
+
+    subgraph Build[Build Pipeline]
+        G[GitHub main]
+        D[Multi-stage Docker build]
+    end
+
+    G --> D --> W
+```
+
 ## Screenshots
 
 ### Storefront
