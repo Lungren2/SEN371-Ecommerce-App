@@ -19,6 +19,10 @@ import Checkout from './pages/Checkout';
 import OrderDetails from './pages/OrderDetails';
 import Orders from './pages/Orders';
 
+const routerBase = import.meta.env.BASE_URL === '/'
+  ? '/'
+  : import.meta.env.BASE_URL.replace(/\/$/, '');
+
 function AnimatedRoutes() {
   const location = useLocation();
 
@@ -81,7 +85,7 @@ function App() {
   if (loading) return <LoadingScreen />;
 
   return (
-    <Router basename="/SEN371-Ecommerce-App">
+    <Router basename={routerBase}>
       <CartProvider>
         <AdaptiveShell footer={<SiteFooter />}>
           <AnimatedRoutes />
