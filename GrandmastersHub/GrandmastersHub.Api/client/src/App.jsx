@@ -5,7 +5,7 @@ import './index.css';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/SEN371-Ecommerce-App">
       <div className="app-container">
         
         {/* Global Header matching Figma properties */}
