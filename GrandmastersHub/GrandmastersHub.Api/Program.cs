@@ -14,12 +14,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+var configuredConnectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("ConnectionStrings:DefaultConnection is required.");
 var databaseProvider = builder.Configuration["Database:Provider"] ?? "SqlServer";
+var connectionString = NormalizeConnectionString(configuredConnectionString, databaseProvider);
 
 builder.Services.AddDbContext<GrandmastersDbContext>(options =>
 {
@@ -154,5 +156,42 @@ app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 app.MapControllers();
 app.MapFallbackToFile("index.html");
 app.Run();
+
+static string NormalizeConnectionString(string connectionString, string databaseProvider)
+{
+    if (!databaseProvider.Equals("Postgres", StringComparison.OrdinalIgnoreCase))
+    {
+        return connectionString;
+    }
+
+    if (!Uri.TryCreate(connectionString, UriKind.Absolute, out var uri)
+        || !(uri.Scheme.Equals("postgres", StringComparison.OrdinalIgnoreCase)
+            || uri.Scheme.Equals("postgresql", StringComparison.OrdinalIgnoreCase)))
+    {
+        return connectionString;
+    }
+
+    var userInfo = uri.UserInfo.Split(':', 2);
+    if (userInfo.Length != 2 || string.IsNullOrWhiteSpace(uri.Host))
+    {
+        throw new InvalidOperationException("The PostgreSQL connection URL is missing credentials or a host.");
+    }
+
+    var database = Uri.UnescapeDataString(uri.AbsolutePath.Trim('/'));
+    if (string.IsNullOrWhiteSpace(database))
+    {
+        throw new InvalidOperationException("The PostgreSQL connection URL is missing a database name.");
+    }
+
+    return new NpgsqlConnectionStringBuilder
+    {
+        Host = uri.Host,
+        Port = uri.IsDefaultPort || uri.Port < 1 ? 5432 : uri.Port,
+        Database = database,
+        Username = Uri.UnescapeDataString(userInfo[0]),
+        Password = Uri.UnescapeDataString(userInfo[1]),
+        Pooling = true,
+    }.ConnectionString;
+}
 
 public partial class Program;
