@@ -6,6 +6,7 @@ import './responsive.css';
 import './adaptive-shell.css';
 import { CartProvider } from './cart/CartProvider';
 import AdaptiveShell from './components/navigation/AdaptiveShell';
+import HomePage from './pages/home/HomePage';
 import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
 import Catalog from './pages/Catalog';
@@ -23,33 +24,7 @@ function AnimatedRoutes() {
   return (
     <main className="main-content fade-page" key={location.pathname}>
       <Routes location={location}>
-        <Route
-          path="/"
-          element={
-            <section className="hero-section fade-page">
-              <div className="hero-content">
-                <div>
-                  <div className="eyebrow">
-                    <div className="eyebrow-line"></div>
-                    <span>The Ultimate Standard of Play</span>
-                  </div>
-                  <h1 className="hero-title">Master Your Strategy</h1>
-                  <p className="hero-desc">
-                    Hand-carved premium equipment crafted from rare hardwoods,
-                    volcanic obsidian, and fine Italian marble.
-                  </p>
-                  <div className="hero-actions">
-                    <Link to="/boards" className="btn-primary">Shop Now</Link>
-                    <Link to="/bespoke" className="btn-secondary">The Heritage</Link>
-                  </div>
-                </div>
-              </div>
-              <div className="hero-image-placeholder">
-                <img src="/images/Main-Page-Lander.png" alt="Welcome" />
-              </div>
-            </section>
-          }
-        />
+        <Route path="/" element={<HomePage />} />
         <Route path="/boards" element={<Catalog title="The Master's Collection" categoryName="boards" />} />
         <Route path="/clocks" element={<Catalog title="Precision Clocks" categoryName="clocks" />} />
         <Route path="/books" element={<Catalog title="Chess Literature" categoryName="books" />} />

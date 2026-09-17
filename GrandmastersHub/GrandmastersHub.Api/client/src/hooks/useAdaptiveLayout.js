@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 
 export const LayoutMode = Object.freeze({
   COMPACT: 'compact',
@@ -6,32 +6,35 @@ export const LayoutMode = Object.freeze({
   EXPANDED: 'expanded',
 });
 
-const COMPACT_QUERY = '(max-width: 48rem)';
-const MEDIUM_QUERY = '(max-width: 64rem)';
+export const adaptiveBreakpoints = Object.freeze({
+  compactMax: 768,
+  mediumMax: 1024,
+});
+
+const getViewportWidth = () => {
+  if (typeof window === 'undefined') return Number.POSITIVE_INFINITY;
+  return window.visualViewport?.width ?? window.innerWidth;
+};
 
 const resolveLayout = () => {
-  if (typeof window === 'undefined') return LayoutMode.EXPANDED;
-  if (window.matchMedia(COMPACT_QUERY).matches) return LayoutMode.COMPACT;
-  if (window.matchMedia(MEDIUM_QUERY).matches) return LayoutMode.MEDIUM;
+  const width = getViewportWidth();
+  if (width <= adaptiveBreakpoints.compactMax) return LayoutMode.COMPACT;
+  if (width <= adaptiveBreakpoints.mediumMax) return LayoutMode.MEDIUM;
   return LayoutMode.EXPANDED;
 };
 
+const subscribe = (onStoreChange) => {
+  if (typeof window === 'undefined') return () => {};
+
+  window.addEventListener('resize', onStoreChange);
+  window.visualViewport?.addEventListener('resize', onStoreChange);
+
+  return () => {
+    window.removeEventListener('resize', onStoreChange);
+    window.visualViewport?.removeEventListener('resize', onStoreChange);
+  };
+};
+
 export default function useAdaptiveLayout() {
-  const [layout, setLayout] = useState(resolveLayout);
-
-  useEffect(() => {
-    const compactQuery = window.matchMedia(COMPACT_QUERY);
-    const mediumQuery = window.matchMedia(MEDIUM_QUERY);
-    const updateLayout = () => setLayout(resolveLayout());
-
-    compactQuery.addEventListener('change', updateLayout);
-    mediumQuery.addEventListener('change', updateLayout);
-
-    return () => {
-      compactQuery.removeEventListener('change', updateLayout);
-      mediumQuery.removeEventListener('change', updateLayout);
-    };
-  }, []);
-
-  return layout;
+  return useSyncExternalStore(subscribe, resolveLayout, () => LayoutMode.EXPANDED);
 }

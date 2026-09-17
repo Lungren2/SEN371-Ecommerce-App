@@ -1,0 +1,338 @@
+/* Home has distinct compact, medium, and expanded compositions. */
+
+.home-kicker {
+  display: block;
+  color: var(--accent-gold);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.home-primary-action,
+.home-secondary-action,
+.home-text-action {
+  text-decoration: none;
+}
+
+.home-primary-action,
+.home-secondary-action {
+  min-height: 3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1.1rem;
+  border-radius: 0.65rem;
+  font-size: 0.84rem;
+  font-weight: 750;
+  line-height: 1;
+}
+
+.home-primary-action {
+  background: var(--accent-gold);
+  color: #121212;
+}
+
+.home-secondary-action {
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  color: var(--accent-gold);
+  background: rgba(212, 175, 55, 0.04);
+}
+
+.home-text-action {
+  color: var(--accent-gold);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.home-section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.home-section-heading h2 {
+  margin-top: 0.25rem;
+  color: var(--text-light);
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 7vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Compact interface */
+
+.home-compact {
+  min-height: 100%;
+  background: var(--bg-primary);
+}
+
+.home-compact-hero {
+  position: relative;
+  min-height: min(68dvh, 36rem);
+  display: flex;
+  align-items: end;
+  overflow: hidden;
+  background: #181818;
+}
+
+.home-compact-hero-image,
+.home-compact-hero-scrim {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.home-compact-hero-image {
+  object-fit: cover;
+  object-position: 68% center;
+}
+
+.home-compact-hero-scrim {
+  background:
+    linear-gradient(to top, rgba(18, 18, 18, 0.98) 0%, rgba(18, 18, 18, 0.82) 35%, rgba(18, 18, 18, 0.2) 72%),
+    linear-gradient(to right, rgba(18, 18, 18, 0.42), transparent 65%);
+}
+
+.home-compact-hero-copy {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: clamp(2rem, 8vw, 3rem) var(--page-gutter) 2rem;
+}
+
+.home-compact-hero-copy h1 {
+  max-width: 8ch;
+  margin: 0.6rem 0 0.8rem;
+  color: var(--text-light);
+  font-family: var(--font-heading);
+  font-size: clamp(3rem, 14vw, 4.4rem);
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.home-compact-hero-copy p {
+  max-width: 31rem;
+  margin-bottom: 1.35rem;
+  color: var(--text-muted);
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+.home-compact-hero-copy .home-primary-action {
+  width: 100%;
+}
+
+.home-compact-section {
+  padding: 2rem 0 2.25rem;
+  border-bottom: 1px solid var(--border-main);
+}
+
+.home-compact-section .home-section-heading {
+  padding-inline: var(--page-gutter);
+  margin-bottom: 1rem;
+}
+
+.home-collection-scroller {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: min(76vw, 18.5rem);
+  gap: 0.85rem;
+  padding: 0 var(--page-gutter) 0.4rem;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.home-collection-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.home-collection-card {
+  position: relative;
+  min-height: 15rem;
+  overflow: hidden;
+  border: 1px solid var(--border-main);
+  border-radius: 1rem;
+  color: var(--text-light);
+  text-decoration: none;
+  scroll-snap-align: start;
+  background: var(--bg-secondary);
+}
+
+.home-collection-card img,
+.home-collection-scrim {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.home-collection-card img {
+  object-fit: cover;
+}
+
+.home-collection-scrim {
+  background: linear-gradient(to top, rgba(18, 18, 18, 0.94), rgba(18, 18, 18, 0.05) 72%);
+}
+
+.home-collection-copy {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.home-collection-copy small,
+.home-medium-card small {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+
+.home-collection-copy strong,
+.home-medium-card strong {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.home-compact-feature {
+  padding: 2.5rem var(--page-gutter) 3rem;
+  background: var(--bg-secondary);
+}
+
+.home-compact-feature h2 {
+  max-width: 12ch;
+  margin: 0.5rem 0 0.8rem;
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 9vw, 2.8rem);
+  font-weight: 600;
+  line-height: 0.98;
+}
+
+.home-compact-feature p {
+  max-width: 34rem;
+  margin-bottom: 1.4rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Medium interface */
+
+.home-medium {
+  width: min(100%, 72rem);
+  margin-inline: auto;
+  padding: 2rem clamp(1.5rem, 4vw, 3rem) 4rem;
+}
+
+.home-medium-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(18rem, 1.05fr);
+  min-height: min(34rem, 62dvh);
+  overflow: hidden;
+  border: 1px solid var(--border-main);
+  border-radius: 1.25rem;
+  background: var(--bg-secondary);
+}
+
+.home-medium-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(2rem, 5vw, 4rem);
+}
+
+.home-medium-copy h1 {
+  max-width: 8ch;
+  margin: 0.65rem 0 1rem;
+  font-family: var(--font-heading);
+  font-size: clamp(3.2rem, 7vw, 5rem);
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: -0.025em;
+}
+
+.home-medium-copy p {
+  max-width: 31rem;
+  margin-bottom: 1.6rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+.home-medium-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.home-medium-media {
+  min-height: 100%;
+}
+
+.home-medium-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 68% center;
+}
+
+.home-medium-collections {
+  padding-top: 2.5rem;
+}
+
+.home-medium-collections .home-section-heading {
+  margin-bottom: 1rem;
+}
+
+.home-medium-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.home-medium-card {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border-main);
+  border-radius: 1rem;
+  color: var(--text-light);
+  background: var(--bg-secondary);
+  text-decoration: none;
+}
+
+.home-medium-card img {
+  width: 7rem;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 0.7rem;
+}
+
+.home-medium-card div {
+  min-width: 0;
+  display: grid;
+  gap: 0.25rem;
+}
+
+@media (max-width: 36rem) {
+  .home-compact-hero {
+    min-height: 62dvh;
+  }
+
+  .home-compact-hero-copy h1 {
+    font-size: clamp(2.8rem, 15vw, 3.8rem);
+  }
+}
