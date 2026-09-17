@@ -374,14 +374,27 @@ The latest run contains:
 
 
 
-\- 33 total tests
+\- 39 total tests
 
-\- 31 passed
+\- 39 passed
 
-\- 2 failed
+\- 0 failed
 
 \- 0 skipped
 
+Database Testing
+
+The following database-focused test suites were added:
+
+- DatabaseEdgeCaseTests.cs
+- DatabaseIntegrityTests.cs
+- ModelValidationTests.cs
+
+These tests cover database edge cases, database integrity constraints,
+and model validation behaviour.
+
+Final automated test result:
+39 total, 39 passed, 0 failed, 0 skipped.
 
 
 The two remaining failures are related to tests expecting existing product
