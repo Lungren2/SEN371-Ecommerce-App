@@ -1,0 +1,69 @@
+name: Frontend TDD checks
+
+on:
+  pull_request:
+    paths:
+      - 'GrandmastersHub/GrandmastersHub.Api/client/src/**'
+      - 'GrandmastersHub/GrandmastersHub.Api/client/tests/browser/**'
+      - 'GrandmastersHub/GrandmastersHub.Api/client/package.json'
+      - 'GrandmastersHub/GrandmastersHub.Api/client/package-lock.json'
+      - '.github/workflows/frontend-tdd.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'GrandmastersHub/GrandmastersHub.Api/client/src/**'
+      - 'GrandmastersHub/GrandmastersHub.Api/client/tests/browser/**'
+      - 'GrandmastersHub/GrandmastersHub.Api/client/package.json'
+      - 'GrandmastersHub/GrandmastersHub.Api/client/package-lock.json'
+      - '.github/workflows/frontend-tdd.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  frontend-components:
+    name: Frontend TDD / Chromium
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            GrandmastersHub/GrandmastersHub.Api/client/package-lock.json
+            GrandmastersHub/GrandmastersHub.Api/client/tests/browser/package-lock.json
+
+      - name: Install application dependencies
+        run: npm ci
+        working-directory: GrandmastersHub/GrandmastersHub.Api/client
+
+      - name: Install browser test dependencies
+        run: npm ci --ignore-scripts
+        working-directory: GrandmastersHub/GrandmastersHub.Api/client/tests/browser
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+        working-directory: GrandmastersHub/GrandmastersHub.Api/client/tests/browser
+
+      - name: Run frontend component tests
+        run: npm run test:components
+        working-directory: GrandmastersHub/GrandmastersHub.Api/client/tests/browser
+        env:
+          CI: 'true'
+
+      - name: Upload TDD failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-tdd-failures
+          path: |
+            GrandmastersHub/GrandmastersHub.Api/client/tests/browser/test-results
+            GrandmastersHub/GrandmastersHub.Api/client/tests/browser/playwright-report
+          if-no-files-found: ignore
+          retention-days: 7

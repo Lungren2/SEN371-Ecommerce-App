@@ -17,18 +17,22 @@ public class ProductRepository : IProductRepository
     public async Task<IEnumerable<Product>> GetAllAsync()
     {
         return await _context.Products
+            .AsSplitQuery()
             .Include(p => p.Category)
             .Include(p => p.Images)
             .Include(p => p.Variants)
+                .ThenInclude(v => v.Inventory)
             .ToListAsync();
     }
 
     public async Task<Product?> GetByIdAsync(int id)
     {
         return await _context.Products
+            .AsSplitQuery()
             .Include(p => p.Category)
             .Include(p => p.Images)
             .Include(p => p.Variants)
+                .ThenInclude(v => v.Inventory)
             .Include(p => p.Reviews)
             .FirstOrDefaultAsync(p => p.ProductId == id);
     }
@@ -36,9 +40,11 @@ public class ProductRepository : IProductRepository
     public async Task<Product?> GetBySlugAsync(string slug)
     {
         return await _context.Products
+            .AsSplitQuery()
             .Include(p => p.Category)
             .Include(p => p.Images)
             .Include(p => p.Variants)
+                .ThenInclude(v => v.Inventory)
             .FirstOrDefaultAsync(p => p.Slug == slug);
     }
 

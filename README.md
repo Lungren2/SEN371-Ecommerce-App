@@ -1,129 +1,114 @@
-# SEN371-Ecommerce-App
-A full-stack, cross-platform e-commerce web application built using MVC architecture, RESTful APIs, and Test-Driven Development (TDD) for SEN371.
+# GrandmastersHub
 
-# SEN371 - Full-Stack E-Commerce Web Application
+A full-stack e-commerce application for SEN371, built with ASP.NET Core, Entity Framework Core, SQL Server, React, and Vite.
 
-## Overview
-A responsive, cross-platform e-commerce platform developed as part of the Software Engineering 371 (SEN371) module. This project follows an Agile development methodology with iterative sprints, Test-Driven Development (TDD), and an MVC architecture to ensure high maintainability, robust API security, and seamless user experience.
+## System architecture
 
-### Key Features & Architecture
-The solution is divided into four distinct projects enforcing inward-pointing dependencies:
+```mermaid
+flowchart LR
+    U[User Browser]
 
-- **GrandmastersHub.Domain**: Contains the core enterprise logic, entity definitions (e.g., User, Cart, Product), and repository interfaces. This layer has zero external dependencies.
+    subgraph Render[Render]
+        W[Docker Web Service\nASP.NET Core API]
+        F[React/Vite SPA\nserved from wwwroot]
+        DB[(PostgreSQL)]
+    end
 
-- **GrandmastersHub.Application**: Coordinates system use cases. Contains business services, validation logic, and Data Transfer Objects (DTOs) to shape API requests and responses.
+    U -->|HTTPS| W
+    W -->|serves static app| F
+    F -->|/api/v1/*| W
+    W -->|EF Core / Npgsql| DB
 
-- **GrandmastersHub.Infrastructure**: Handles external concerns, specifically the SQL Server database connection, Entity Framework Core configurations, and the physical implementation of the repository interfaces.
+    subgraph Build[Build Pipeline]
+        G[GitHub main]
+        D[Multi-stage Docker build]
+    end
 
-- **GrandmastersHub.Api**: The RESTful HTTP entry point. Contains the controllers (prefixed with /api/v1/), Swagger UI configuration, and middleware for global error handling.
-
-
-## Prerequisites
-Ensure the following tools are installed on your local development environment before proceeding:
-- .NET 10.0 SDK or later
-- Visual Studio 2022 (or VS Code)
-- SQL Server (Developer or Express edition)
-- Git
-
-## Local Setup & Execution - Run these commands one by one
-1. Clone the Repository:
-- ```git clone https://github.com/MJVermaak/SEN371-Ecommerce-App.git```
-- ```cd SEN371-Ecommerce-App/GrandmastersHub```
-
-2. Restore Dependencies:
-Navigate into the API project folder and restore the required NuGet packages (including Swashbuckle for Swagger UI).
-- ```cd GrandmastersHub/GrandmastersHub.Api```
-- ```dotnet restore```
-
-3. Run the Server:
-Launch the development server. By default, the application will listen on HTTP port 5188.
-- ```dotnet run```
-
-Test the Endpoints:
-Once the server is running, open a web browser and navigate to the Swagger UI dashboard to interact with the API endpoints visually:
-- `http://localhost:5188/swagger`
-
-## API access and authorization
-
-The API uses JWT bearer authentication. In Swagger, select **Authorize** and enter the access token returned by `POST /api/v1/auth/login` or `POST /api/v1/auth/register`. Swagger adds the `Bearer` scheme automatically.
-
-Current endpoint access is:
-
-| Endpoint | Access |
-| --- | --- |
-| `POST /api/v1/auth/register` | Public |
-| `POST /api/v1/auth/login` | Public |
-| `GET /api/v1/auth/me` | Any authenticated user |
-| `GET /api/v1/products` | Public |
-| `GET /api/v1/products/{id}` | Public |
-| `POST /api/v1/products` | Admin only |
-| `GET /api/v1/categories` | Public |
-| `GET /api/v1/categories/{id}` | Public |
-| `POST /api/v1/categories` | Admin only |
-
-Anonymous requests to authenticated endpoints receive `401 Unauthorized`. Authenticated users without the required role receive `403 Forbidden`. New catalog write endpoints should use the `AdminOnly` authorization policy. Cart, order, and review authorization will be documented when those controllers are implemented and their ownership rules are agreed.
-
-## JWT configuration and secrets
-
-JWT settings are read from the `Jwt` configuration section. The checked-in base configuration deliberately leaves `Jwt:SigningKey` empty so the application cannot start in a non-development environment without an explicitly supplied key. The local development settings contain a development-only key and must never be reused in a deployed environment.
-
-For local development, a developer can keep a private key outside source control with .NET user secrets:
-
-```powershell
-cd GrandmastersHub/GrandmastersHub.Api
-dotnet user-secrets init
-dotnet user-secrets set "Jwt:SigningKey" "use-a-random-key-containing-at-least-32-bytes"
+    G --> D --> W
 ```
 
-For deployment, supply the key through the hosting platform's secret manager. ASP.NET Core maps the environment variable `Jwt__SigningKey` to `Jwt:SigningKey`. The deployed key must be random, at least 32 bytes, restricted to the API service, and rotated if exposed. Do not commit production keys to `appsettings*.json`, `.env` files, CI configuration, or documentation.
+## Screenshots
 
-Production deployments should also set `Jwt__Issuer`, `Jwt__Audience`, and optionally `Jwt__ExpiryMinutes` to values for that environment. Clients must obtain a new token after signing-key rotation.
+### Storefront
 
-## Database Migrations
-Note: The automated database migration check on startup is currently disabled to allow frontend and API routing tests without a local SQL Server instance.
-When the database schema is ready to be generated or updated, execute the following commands from the root solution folder:
+![GrandmastersHub storefront](docs/screenshots/home.png)
 
-To create a new migration:
-- ```dotnet ef migrations add <MigrationName> --project GrandmastersHub.Infrastructure --startup-project GrandmastersHub.Api```
+### Product catalog
 
-To apply migrations to the database:
-- ```dotnet ef database update --project GrandmastersHub.Infrastructure --startup-project GrandmastersHub.Api```
+![GrandmastersHub chess board catalog](docs/screenshots/catalog.png)
 
-# Project Roadmap (Milestones 1 - 6)
-- **Milestone 1: Project Planning & Architecture (Completed)**
-  - System documentation, UI mockups, and database schema design.
-  - Establishment of the baseline Clean Architecture folder structure.
-    
-- **Milestone 2: Backend Domain & Infrastructure (In Progress)**
-  - Implementation of core entities, EF Core database context, and repository logic.
-  - SQL Server integration and initial data seeding.
-    
-- **Milestone 3: Application & API Layers**
-  - Development of RESTful controllers, DTOs, and business services.
-  - Implementation of JSON Web Token (JWT) authentication and role-based authorization.
-    
-- **Milestone 4: Front End (React Client & UI)**
-  - Initialization of the React workspace and responsive HTML5/CSS3 layout.
-  - Development of static components for the product catalog, cart, and user dashboards.
-    
-- **Milestone 5: System Integration**
-  - Connecting the React frontend to the ASP.NET Core backend APIs via Axios/Fetch.
-  - Implementing global state management and final checkout flows.
-    
-- **Milestone 6: QA Testing & Deployment**
-  - End-to-end testing, bug squashing, and performance optimization.
-  - Final project presentation preparation and cloud deployment (if applicable).
- 
+## Prerequisites
 
-## Project Team
-- **Person 1: Martinus Jacobus Vermaak**
-  - **Responsibilities**: Core MVC Architecture, Product Catalog APIs (Endpoints & DTOs), Core React UI, and HTML5/CSS3 Frontend Shell.
-    
-- **Person 2: Kimberly Tadiwanashe Karonga**
-  - **Responsibilities**: EF Core Database Integration, Data Repositories, Order & Cart APIs, and Frontend Shopping Cart UI.
-    
-- **Person 3: Ethan Ogle**
-  - **Responsibilities**: System Authentication, Security Endpoints (JWTs & Password Hashing), and Login/Registration Frontend UI.
-    
-- **Person 4: Reinhardt Kleynhans**
-  - **Responsibilities**: Additional Data Repositories, Global Error Handling Middleware, and User Profile Dashboard UI.
+- .NET 10 SDK
+- Node.js and npm
+- SQL Server (Developer or Express)
+- Git
+
+The checked-in connection string uses Windows authentication and expects SQL Server on `localhost`. See [Database setup](docs/database-setup.md) if your SQL Server configuration differs.
+
+## Run locally
+
+Start SQL Server, then open two PowerShell terminals.
+
+### Terminal 1: API
+
+```powershell
+Set-Location 'C:\path\to\SEN371-Ecommerce-App'
+
+# Generate a signing key for this local session.
+$keyBytes = New-Object byte[] 64
+$rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+try {
+    $rng.GetBytes($keyBytes)
+}
+finally {
+    $rng.Dispose()
+}
+
+# Override missing or empty configuration.
+$env:Jwt__SigningKey = [Convert]::ToBase64String($keyBytes)
+$env:DOTNET_ENVIRONMENT = 'Development'
+$env:ASPNETCORE_ENVIRONMENT = 'Development'
+$env:Database__ApplyMigrationsOnStartup = 'true'
+
+dotnet run --project .\GrandmastersHub\GrandmastersHub.Api --no-launch-profile -- --urls http://localhost:5188
+```
+
+On startup, the API applies the committed database migrations. Leave this terminal running.
+
+### Terminal 2: frontend
+
+```powershell
+Set-Location 'D:\dev\SEN371-Ecommerce-App\GrandmastersHub\GrandmastersHub.Api\client'
+npm install
+npm run dev
+```
+
+Open the Vite URL shown in the terminal. API requests from the frontend are proxied to `http://localhost:5188`.
+
+## Useful URLs
+
+- API: `http://localhost:5188`
+- Swagger: `http://localhost:5188/swagger`
+
+## Project structure
+
+- `GrandmastersHub.Domain` — entities and repository contracts
+- `GrandmastersHub.Application` — use cases, services, validation, and DTOs
+- `GrandmastersHub.Infrastructure` — EF Core, SQL Server, and repository implementations
+- `GrandmastersHub.Api` — REST API and React client
+- `GrandmastersHub.Tests` — automated tests
+
+## Tests
+
+From the repository root:
+
+```powershell
+dotnet test .\GrandmastersHub\GrandmastersHub.slnx
+
+Set-Location .\GrandmastersHub\GrandmastersHub.Api\client
+npm test
+npm run lint
+```
+
+The generated JWT signing key exists only in the API terminal's process environment and is not saved to source control. Use a managed secret with a random key of at least 32 bytes for deployment.
