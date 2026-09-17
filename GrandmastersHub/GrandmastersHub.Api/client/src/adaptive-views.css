@@ -1,0 +1,105 @@
+/* CSS owns viewport composition. React renders structure; media queries select the view. */
+
+.adaptive-view-compact,
+.adaptive-view-medium {
+  display: none;
+}
+
+.adaptive-view-expanded {
+  display: block;
+}
+
+.adaptive-topbar,
+.adaptive-navigation-rail,
+.adaptive-bottom-navigation {
+  display: none;
+}
+
+.adaptive-desktop-header,
+.adaptive-desktop-footer {
+  display: block;
+}
+
+.adaptive-shell-body {
+  display: block;
+}
+
+.adaptive-catalog-header {
+  display: none;
+}
+
+.adaptive-catalog-desktop-title {
+  display: block;
+}
+
+@media (max-width: 64rem) {
+  .adaptive-view-expanded {
+    display: none;
+  }
+
+  .adaptive-view-medium {
+    display: block;
+  }
+
+  .adaptive-desktop-header,
+  .adaptive-desktop-footer {
+    display: none;
+  }
+
+  .adaptive-topbar {
+    display: grid;
+  }
+
+  .adaptive-shell-body {
+    display: grid;
+    grid-template-columns: var(--adaptive-rail-width) minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .adaptive-shell-body.focused-flow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .adaptive-navigation-rail {
+    display: block;
+  }
+
+  .adaptive-shell-body.focused-flow .adaptive-navigation-rail {
+    display: none;
+  }
+
+  .adaptive-catalog-header {
+    display: block;
+  }
+
+  .adaptive-catalog-desktop-title {
+    display: none;
+  }
+}
+
+@media (max-width: 48rem) {
+  .adaptive-view-medium {
+    display: none;
+  }
+
+  .adaptive-view-compact {
+    display: block;
+  }
+
+  .adaptive-shell-body,
+  .adaptive-shell-body.focused-flow {
+    display: block;
+  }
+
+  .adaptive-navigation-rail {
+    display: none;
+  }
+
+  .adaptive-bottom-navigation {
+    display: block;
+  }
+
+  .adaptive-shell[data-global-nav='visible'] .adaptive-shell-content {
+    padding-bottom: calc(var(--adaptive-bottom-nav-height) + env(safe-area-inset-bottom));
+  }
+}
