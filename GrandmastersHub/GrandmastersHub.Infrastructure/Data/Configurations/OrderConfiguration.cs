@@ -14,7 +14,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(o => o.CheckoutKey).HasMaxLength(36);
         builder.HasIndex(o => o.UserId);
         builder.HasIndex(o => new { o.UserId, o.CheckoutKey }).IsUnique()
-            .HasFilter("\"CheckoutKey\" IS NOT NULL");
+            .HasFilter("[CheckoutKey] IS NOT NULL");
         builder.HasOne(o => o.User).WithMany(u => u.Orders)
             .HasForeignKey(o => o.UserId).OnDelete(DeleteBehavior.Restrict);
         builder.HasMany(o => o.Items).WithOne(i => i.Order)

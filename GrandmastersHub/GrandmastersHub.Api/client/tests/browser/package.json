@@ -4,10 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "playwright test",
-    "test:adaptive": "playwright test adaptive-layout.spec.mjs",
-    "test:components": "playwright test ui-components.spec.mjs",
-    "test:components:headed": "playwright test ui-components.spec.mjs --headed"
+    "test": "playwright test"
   },
   "devDependencies": {
     "@playwright/test": "1.57.0"
