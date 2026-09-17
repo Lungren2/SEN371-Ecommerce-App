@@ -126,7 +126,7 @@ test.describe('adaptive application shell', () => {
   });
 
   test('phone Shop uses local category navigation instead of desktop category chrome', async ({ page }) => {
-    await page.route('**/api/**', async (route) => {
+    await page.route(/\/api\/v1\/products(?:\?.*)?$/, async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
