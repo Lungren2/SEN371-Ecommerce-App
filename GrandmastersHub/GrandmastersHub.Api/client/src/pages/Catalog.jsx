@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import { catalogApi } from '../api/client';
 import ProductCard from './ProductCard';
 
@@ -8,6 +9,13 @@ const CATEGORY_IMAGES = {
   books: '/images/book-1.png',
   bespoke: '/images/Volcanic.png',
 };
+
+const CATEGORY_LINKS = [
+  { to: '/boards', label: 'Boards' },
+  { to: '/clocks', label: 'Clocks' },
+  { to: '/books', label: 'Books' },
+  { to: '/bespoke', label: 'Bespoke' },
+];
 
 const normalize = (value = '') => value.trim().toLowerCase();
 
@@ -56,8 +64,24 @@ const Catalog = ({ title, categoryName }) => {
     }));
 
   return (
-    <section className="catalog-container" aria-busy={loading}>
-      <h1 className="section-title">{title}</h1>
+    <section className="catalog-container catalog-adaptive" aria-busy={loading}>
+      <header className="adaptive-catalog-header">
+        <span className="adaptive-catalog-eyebrow">Collection</span>
+        <h1 className="adaptive-catalog-title">{title}</h1>
+        <nav className="adaptive-category-nav" aria-label="Shop categories">
+          {CATEGORY_LINKS.map((category) => (
+            <NavLink
+              key={category.to}
+              to={category.to}
+              className={({ isActive }) => `adaptive-category-link${isActive ? ' is-active' : ''}`}
+            >
+              {category.label}
+            </NavLink>
+          ))}
+        </nav>
+      </header>
+
+      <h1 className="section-title adaptive-catalog-desktop-title">{title}</h1>
 
       {loading && <div className="catalog-state" role="status">Loading the collection...</div>}
 
