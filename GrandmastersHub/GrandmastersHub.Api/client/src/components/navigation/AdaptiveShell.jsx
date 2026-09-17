@@ -1,6 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '../../cart/CartProvider';
-import useAdaptiveLayout, { LayoutMode } from '../../hooks/useAdaptiveLayout';
 
 const SHOP_PATHS = ['/boards', '/clocks', '/books', '/bespoke'];
 const FOCUSED_PATHS = ['/checkout', '/login', '/register'];
@@ -188,41 +187,37 @@ function ContextTopBar() {
 }
 
 export default function AdaptiveShell({ children, footer }) {
-  const layout = useAdaptiveLayout();
   const { pathname } = useLocation();
   const focused = isFocusedPath(pathname);
 
-  if (layout === LayoutMode.EXPANDED) {
-    return (
-      <div className="app-container">
-        <DesktopHeader />
-        {children}
-        {footer}
-      </div>
-    );
-  }
-
   return (
     <div
-      className={`app-container adaptive-shell adaptive-${layout}`}
+      className="app-container adaptive-shell"
       data-global-nav={focused ? 'hidden' : 'visible'}
     >
+      <div className="adaptive-desktop-header">
+        <DesktopHeader />
+      </div>
+
       <ContextTopBar />
 
       <div className={`adaptive-shell-body${focused ? ' focused-flow' : ''}`}>
-        {layout === LayoutMode.MEDIUM && !focused && (
+        {!focused && (
           <aside className="adaptive-navigation-rail">
             <AdaptiveDestinations variant="rail" />
           </aside>
         )}
+
         <div className="adaptive-shell-content">{children}</div>
       </div>
 
-      {layout === LayoutMode.COMPACT && !focused && (
+      {!focused && (
         <div className="adaptive-bottom-navigation">
           <AdaptiveDestinations variant="bottom" />
         </div>
       )}
+
+      <div className="adaptive-desktop-footer">{footer}</div>
     </div>
   );
 }
