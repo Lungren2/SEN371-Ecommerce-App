@@ -4,6 +4,7 @@ import './index.css';
 import './shopping.css';
 import './responsive.css';
 import './adaptive-shell.css';
+import './adaptive-views.css';
 import { CartProvider } from './cart/CartProvider';
 import AdaptiveShell from './components/navigation/AdaptiveShell';
 import HomePage from './pages/home/HomePage';
