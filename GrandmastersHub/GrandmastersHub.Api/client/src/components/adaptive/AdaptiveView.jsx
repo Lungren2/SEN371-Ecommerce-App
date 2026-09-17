@@ -1,9 +1,12 @@
-import useAdaptiveLayout, { LayoutMode } from '../../hooks/useAdaptiveLayout';
-
 export default function AdaptiveView({ compact, medium, expanded }) {
-  const layout = useAdaptiveLayout();
+  const mediumView = medium ?? compact;
+  const expandedView = expanded ?? mediumView;
 
-  if (layout === LayoutMode.COMPACT) return compact;
-  if (layout === LayoutMode.MEDIUM) return medium ?? compact;
-  return expanded ?? medium ?? compact;
+  return (
+    <>
+      <div className="adaptive-view-compact">{compact}</div>
+      <div className="adaptive-view-medium">{mediumView}</div>
+      <div className="adaptive-view-expanded">{expandedView}</div>
+    </>
+  );
 }
