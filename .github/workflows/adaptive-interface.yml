@@ -22,17 +22,20 @@ permissions:
 
 jobs:
   adaptive-browser:
-    name: Viewport composition
+    name: Viewport composition / Chromium
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+
     defaults:
       run:
         working-directory: GrandmastersHub/GrandmastersHub.Api/client/tests/browser
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: npm
@@ -55,12 +58,17 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Verify adaptive interfaces
-        run: npx playwright test adaptive-layout.spec.mjs
+        run: npm run test:adaptive
+        env:
+          CI: 'true'
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload Playwright failure artifacts
         if: failure()
+        uses: actions/upload-artifact@v4
         with:
           name: adaptive-interface-failures
-          path: GrandmastersHub/GrandmastersHub.Api/client/tests/browser/test-results
+          path: |
+            GrandmastersHub/GrandmastersHub.Api/client/tests/browser/test-results
+            GrandmastersHub/GrandmastersHub.Api/client/tests/browser/playwright-report
           if-no-files-found: ignore
-          retention-days: 5
+          retention-days: 7
